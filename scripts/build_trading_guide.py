@@ -1107,8 +1107,8 @@ def build():
         ('Part III — Applying What You’ve Learned', [
             'Chapter 5.  Putting Patterns to Work in HFX / Binary Options',
             'Chapter 6.  Risk & Money Management',
-            'Closing Note from OneWay FX',
             'Glossary of Terms',
+            'Closing Note from OneWay FX',
         ]),
     ]
     for part_title, entries in toc_parts:
@@ -1376,6 +1376,20 @@ def build():
         story.append(Paragraph(body, styles['Body']))
     story.append(PageBreak())
 
+    # ---------------- Glossary ----------------
+    story.append(Paragraph('REFERENCE', styles['ChapterKicker']))
+    story.append(Paragraph('Glossary of Terms', styles['ChapterTitle']))
+    story.append(HR(468, color=GOLD, thickness=2, space_after=14))
+    story.append(Paragraph(
+        "Quick definitions for the terms used throughout this guide.", styles['Body']))
+    story.append(Spacer(1, 4))
+    navy_hex = _hex(NAVY)
+    for term, definition in GLOSSARY:
+        story.append(Paragraph(
+            f'<b><font color="{navy_hex}">{term}</font></b> — {definition}',
+            styles['GlossaryEntry']))
+    story.append(PageBreak())
+
     # ---------------- Closing ----------------
     story.append(Paragraph('CLOSING NOTE', styles['ChapterKicker']))
     story.append(Paragraph('From the OneWay FX Team', styles['ChapterTitle']))
@@ -1393,20 +1407,6 @@ def build():
     story.append(Spacer(1, 16))
     story.append(Paragraph('OneWay FX', ParagraphStyle('sig', fontName='Helvetica-Bold', fontSize=13, textColor=NAVY)))
     story.append(Paragraph('onewayfxsupport@gmail.com', styles['Caption']))
-    story.append(PageBreak())
-
-    # ---------------- Glossary ----------------
-    story.append(Paragraph('REFERENCE', styles['ChapterKicker']))
-    story.append(Paragraph('Glossary of Terms', styles['ChapterTitle']))
-    story.append(HR(468, color=GOLD, thickness=2, space_after=14))
-    story.append(Paragraph(
-        "Quick definitions for the terms used throughout this guide.", styles['Body']))
-    story.append(Spacer(1, 4))
-    navy_hex = _hex(NAVY)
-    for term, definition in GLOSSARY:
-        story.append(Paragraph(
-            f'<b><font color="{navy_hex}">{term}</font></b> — {definition}',
-            styles['GlossaryEntry']))
 
     doc.build(story)
 
