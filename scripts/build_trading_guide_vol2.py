@@ -202,9 +202,9 @@ def warn_box(title, body_lines, bg=WARN_BG, line=WARN_LINE, head_style='WarnHead
 
 
 def module_opener(number, title, blurb):
-    """A visually distinct module-opener block: big number + title + one-line blurb."""
+    """A visually distinct chapter-opener block: big number + title + one-line blurb."""
     num = Paragraph(f'{number:02d}', styles['ModuleNum'])
-    head = [Paragraph(f'MODULE {number}', styles['ChapterKicker']),
+    head = [Paragraph(f'CHAPTER {number}', styles['ChapterKicker']),
             Paragraph(title, styles['ChapterTitle']),
             Paragraph(blurb, styles['Body'])]
     t = Table([[num, head]], colWidths=[64, 404])
@@ -275,7 +275,7 @@ def _tri_arrow(d, x, y, direction, color, size=5.5):
 
 
 # ---------------------------------------------------------------------------
-# Structure / level diagram engine (Modules 1, 2, 8, 9, 10, 11)
+# Structure / level diagram engine (Chapters 1, 2, 8, 9, 10, 11)
 # ---------------------------------------------------------------------------
 
 def structure_drawing(points, width=468, height=188, ref_line=None, ref_label=None,
@@ -372,7 +372,7 @@ def split_drawing_row(left_drawing, left_caption, right_drawing, right_caption, 
 
 
 # ---------------------------------------------------------------------------
-# Candlestick diagram engine (Modules 4, 5, 10, 11) — ported from Volume I
+# Candlestick diagram engine (Chapters 4, 5, 10, 11) — ported from Volume I
 # ---------------------------------------------------------------------------
 
 def _candle(d, cx, o, c, hi, lo, w, y0, yscale, fill=None, muted=False):
@@ -615,7 +615,7 @@ def render_topic(title, paragraphs, drawing=None, caption=None, bullets=None):
 
 
 # ---------------------------------------------------------------------------
-# MODULE 1 — Understanding Market Structure
+# CHAPTER 1 — Understanding Market Structure
 # ---------------------------------------------------------------------------
 
 MODULE1_INTRO = (
@@ -636,7 +636,7 @@ MODULE1_TOPICS = [
             "lows (points where price turned up). Connect those turning points and "
             "you get a zigzag that tells you, at a glance, whether buyers or sellers "
             "have been winning.",
-            "Everything in this module — trends, ranges, reversals, BOS, CHoCH — is "
+            "Everything in this chapter — trends, ranges, reversals, BOS, CHoCH — is "
             "just a different way of describing the relationship between one swing "
             "point and the next.",
         ],
@@ -818,14 +818,14 @@ MODULE1_TOPICS = [
 ]
 
 # ---------------------------------------------------------------------------
-# MODULE 2 — Support & Resistance
+# CHAPTER 2 — Support & Resistance
 # ---------------------------------------------------------------------------
 
 MODULE2_INTRO = (
     "Structure tells you the direction. Support and resistance tell you where to "
     "actually look for a trade. A Bullish Engulfing Bar floating in open air is a "
     "coin flip; the same candle forming exactly at a level price has respected "
-    "before is a completely different proposition. This module is about finding "
+    "before is a completely different proposition. This chapter is about finding "
     "those levels and learning to tell the strong ones from the weak ones."
 )
 
@@ -987,12 +987,12 @@ MODULE2_TOPICS = [
 ]
 
 # ---------------------------------------------------------------------------
-# MODULE 3 — Candlestick Psychology
+# CHAPTER 3 — Candlestick Psychology
 # ---------------------------------------------------------------------------
 
 MODULE3_INTRO = (
     "Volume I taught you to recognize fourteen candlestick patterns by shape. This "
-    "module asks a different question: why does each one form in the first place? "
+    "chapter asks a different question: why does each one form in the first place? "
     "Every pattern is really just a short story about a fight between buyers and "
     "sellers — and once you can read that story, you stop memorizing shapes and "
     "start thinking about what large, well-funded traders were probably doing "
@@ -1112,7 +1112,7 @@ MODULE3_PATTERNS = [
 ]
 
 # ---------------------------------------------------------------------------
-# MODULE 4 — Candlestick Confirmation
+# CHAPTER 4 — Candlestick Confirmation
 # ---------------------------------------------------------------------------
 
 MODULE4_INTRO = (
@@ -1177,7 +1177,7 @@ MODULE4_TOPICS = [
     dict(
         title='Trend Direction',
         paragraphs=[
-            "Go back to Module 1. A reversal pattern only means something at the "
+            "Go back to Chapter 1. A reversal pattern only means something at the "
             "end of a real trend; a continuation pattern only means something in "
             "the direction of a trend that's already in motion. The exact same "
             "candle shape appearing in the middle of a range, with no structure "
@@ -1187,7 +1187,7 @@ MODULE4_TOPICS = [
     dict(
         title='Support & Resistance',
         paragraphs=[
-            "Go back to Module 2. A pattern forming at a well-tested horizontal "
+            "Go back to Chapter 2. A pattern forming at a well-tested horizontal "
             "level, a dynamic trendline, or a round psychological number carries "
             "meaningfully more weight than the same pattern forming in open air "
             "with no level nearby.",
@@ -1201,7 +1201,7 @@ MODULE4_TOPICS = [
             "Hammer, at support, with the next candle closing higher, and RSI "
             "turning up from oversold, is a completely different quality of setup "
             "than a Hammer sitting alone in the middle of a chart.",
-            "This is the exact idea Module 7 builds on: professional setups are "
+            "This is the exact idea Chapter 7 builds on: professional setups are "
             "rarely a single pattern in isolation — they're several signals "
             "agreeing with each other at the same time and the same price.",
         ],
@@ -1209,12 +1209,12 @@ MODULE4_TOPICS = [
 ]
 
 # ---------------------------------------------------------------------------
-# MODULE 5 — 12 Advanced Candlestick Patterns
+# CHAPTER 5 — 12 Advanced Candlestick Patterns
 # ---------------------------------------------------------------------------
 
 MODULE5_INTRO = (
     "The fourteen patterns in Volume I cover most of what you'll see day to day. "
-    "This module adds twelve more — patterns built from three, four, or five "
+    "This chapter adds twelve more — patterns built from three, four, or five "
     "candles instead of one or two, which means they tell a longer, more detailed "
     "story about the fight between buyers and sellers. They tend to be rarer than "
     "the basics, but when they do appear, they're often some of the highest-"
@@ -1470,14 +1470,14 @@ MODULE5_PATTERNS = [
 ]
 
 # ---------------------------------------------------------------------------
-# MODULE 6 — Candlestick Pattern Reliability
+# CHAPTER 6 — Candlestick Pattern Reliability
 # ---------------------------------------------------------------------------
 
 MODULE6_INTRO = (
     "Not every candlestick pattern deserves the same amount of trust. Some "
     "patterns represent a total, forceful handover of control that's hard to fake; "
     "others represent a much softer signal that needs real supporting evidence "
-    "before it means anything. This module sorts every pattern from both volumes "
+    "before it means anything. This chapter sorts every pattern from both volumes "
     "into three tiers, and explains what separates one tier from the next."
 )
 
@@ -1557,14 +1557,14 @@ MODULE6_TIERS = [
 ]
 
 # ---------------------------------------------------------------------------
-# MODULE 7 — Candlestick Pattern Combinations
+# CHAPTER 7 — Candlestick Pattern Combinations
 # ---------------------------------------------------------------------------
 
 MODULE7_INTRO = (
-    "Every module so far has taught you one ingredient at a time: structure, "
+    "Every chapter so far has taught you one ingredient at a time: structure, "
     "levels, a pattern, confirmation. Real, high-conviction setups come from "
     "stacking several of those ingredients on top of each other at the same price, "
-    "at the same time. This module shows what that stacking actually looks like "
+    "at the same time. This chapter shows what that stacking actually looks like "
     "in practice."
 )
 
@@ -1598,7 +1598,7 @@ MODULE7_COMBOS = [
          explanation="A Hammer alone is a hint. A Hammer that gets confirmed by a "
                      "Bullish Engulfing Bar, both forming right at a tested support "
                      "level, is three independent signals agreeing at the same "
-                     "price — exactly the kind of confluence Module 4 is about."),
+                     "price — exactly the kind of confluence Chapter 4 is about."),
     dict(parts=['Morning Star', 'Demand Zone'], result='High Probability',
          result_color=GOOD_GREEN,
          explanation="A Morning Star is already a high-conviction, three-candle "
@@ -1620,19 +1620,19 @@ MODULE7_COMBOS = [
                      "level, and structure all pointing to the same reversal."),
     dict(parts=['Doji', 'Support', 'Confirmation Candle'], result='Cautious Long Entry',
          result_color=GOLD,
-         explanation="A Doji by itself is only a three-star signal (Module 6). But "
+         explanation="A Doji by itself is only a three-star signal (Chapter 6). But "
                      "a Doji at support, followed by a strong bullish confirmation "
                      "candle, has climbed the confidence ladder rung by rung — "
                      "this is how a weak pattern becomes a tradeable setup."),
 ]
 
 # ---------------------------------------------------------------------------
-# MODULE 8 — Fake Candlestick Signals
+# CHAPTER 8 — Fake Candlestick Signals
 # ---------------------------------------------------------------------------
 
 MODULE8_INTRO = (
     "Most beginner losses don't come from not knowing any patterns — they come "
-    "from trusting a signal that was never real in the first place. This module "
+    "from trusting a signal that was never real in the first place. This chapter "
     "covers the most common ways candlesticks lie, and how to protect yourself "
     "from each one."
 )
@@ -1736,7 +1736,7 @@ MODULE8_TOPICS = [
 ]
 
 # ---------------------------------------------------------------------------
-# MODULE 9 — Candlesticks on Different Timeframes
+# CHAPTER 9 — Candlesticks on Different Timeframes
 # ---------------------------------------------------------------------------
 
 MODULE9_INTRO = (
@@ -1778,7 +1778,7 @@ MODULE9_TIMEFRAMES = [
 MODULE9_HTF_DRAWING = [
     Paragraph('Higher Timeframe Controls Lower Timeframe', styles['SectionHeading']),
     Paragraph(
-        "Here is the single most important idea in this module: whatever the "
+        "Here is the single most important idea in this chapter: whatever the "
         "higher timeframe is doing outranks whatever the lower timeframe is "
         "doing. A lower-timeframe chart can show a convincing-looking CHoCH or "
         "even a full reversal — and it can still just be a pullback once you "
@@ -1801,7 +1801,7 @@ MODULE9_HTF_DRAWING = [
 ]
 
 # ---------------------------------------------------------------------------
-# MODULE 10 — The OneWay FX Candlestick Strategy
+# CHAPTER 10 — The OneWay FX Candlestick Strategy
 # ---------------------------------------------------------------------------
 
 MODULE10_INTRO = (
@@ -1813,16 +1813,16 @@ MODULE10_INTRO = (
 )
 
 MODULE10_CHECKLIST = [
-    ("1. What's the trend?", "Check Module 1's structure first: Higher Highs and "
+    ("1. What's the trend?", "Check Chapter 1's structure first: Higher Highs and "
      "Higher Lows, Lower Highs and Lower Lows, or a range? Only take reversal "
      "patterns at the end of a trend, and continuation patterns with the trend."),
-    ("2. Is there a support or resistance level here?", "Check Module 2: is "
+    ("2. Is there a support or resistance level here?", "Check Chapter 2: is "
      "price at a horizontal level, a dynamic trendline, or a psychological round "
      "number? No level nearby is a reason to keep waiting."),
-    ("3. Is there an actual candlestick pattern?", "From Volume I or Module 5: "
+    ("3. Is there an actual candlestick pattern?", "From Volume I or Chapter 5: "
      "has price formed a recognizable pattern at this level, or are you just "
      "hoping one is about to appear?"),
-    ("4. Has it been confirmed?", "Per Module 4: has the next candle closed in "
+    ("4. Has it been confirmed?", "Per Chapter 4: has the next candle closed in "
      "the expected direction? Don't front-run the confirmation."),
     ("5. Is the risk/reward worth it?", "Compare the distance from your entry to "
      "your stop loss against the distance from your entry to your target. A "
@@ -1845,14 +1845,14 @@ MODULE10_EXAMPLE_DRAWING = structure_drawing(
     trend_label='Worked Example')
 
 # ---------------------------------------------------------------------------
-# MODULE 11 — Trade Case Studies (illustrative examples)
+# CHAPTER 11 — Trade Case Studies (illustrative examples)
 # ---------------------------------------------------------------------------
 
 MODULE11_INTRO = (
-    "The examples in this module are illustrative teaching diagrams, not real "
+    "The examples in this chapter are illustrative teaching diagrams, not real "
     "historical charts or actual trades. Each one pairs a common mistake with the "
-    "disciplined version of the same decision, using the ideas from every module "
-    "before this one. Read each pair and try to spot which rule from Module 12 it "
+    "disciplined version of the same decision, using the ideas from every chapter "
+    "before this one. Read each pair and try to spot which rule from Chapter 12 it "
     "connects to before you turn the page."
 )
 
@@ -1893,11 +1893,11 @@ MODULE11_CASES = [
                 "whether it will hold — you're buying a story that hasn't finished being written."),
     dict(number=2, title='Buying Into Resistance',
          bad="Price rallies into a well-tested resistance level and a trader "
-             "buys anyway because \"it looks strong,\" ignoring Module 2 entirely.",
+             "buys anyway because \"it looks strong,\" ignoring Chapter 2 entirely.",
          good="A trader recognizes the same resistance level, waits to see "
               "whether price breaks and holds above it or gets rejected, and only "
               "acts on whichever outcome actually happens.",
-         lesson="Never buy into resistance or sell into support — Module 12's "
+         lesson="Never buy into resistance or sell into support — Chapter 12's "
                 "first rule exists because of exactly this mistake."),
     dict(number=3, title='No Stop Loss',
          bad="A trader enters with no predefined stop loss \"because this one "
@@ -1958,7 +1958,7 @@ MODULE11_CASES = [
          bad="A trader spots a bearish pattern on a 5-minute chart and shorts "
              "it, without checking that the Daily chart is in a powerful, "
              "well-established uptrend.",
-         good="A trader checks the Daily trend first (Module 9), sees the "
+         good="A trader checks the Daily trend first (Chapter 9), sees the "
               "strong uptrend, and either skips the short entirely or only takes "
               "bullish setups on the lower timeframe.",
          lesson="The higher timeframe controls the lower timeframe — fighting "
@@ -2002,7 +2002,7 @@ MODULE11_CASES = [
              "with no trend context, no level, and no confirmation behind it.",
          good="A trader waits until that same Doji forms at a tested support "
               "level with a strong confirming candle behind it — turning a "
-              "three-star pattern into a genuinely tradeable setup (Module 7).",
+              "three-star pattern into a genuinely tradeable setup (Chapter 7).",
          lesson="The pattern is the least important ingredient in a good trade "
                 "— context is what does most of the work."),
     dict(number=12, title='Revenge Trading After a Loss',
@@ -2016,7 +2016,7 @@ MODULE11_CASES = [
 ]
 
 # ---------------------------------------------------------------------------
-# MODULE 12 — Candlestick Trading Rules
+# CHAPTER 12 — Candlestick Trading Rules
 # ---------------------------------------------------------------------------
 
 MODULE12_INTRO = (
@@ -2028,19 +2028,19 @@ MODULE12_INTRO = (
 
 MODULE12_RULES = [
     ("Never chase candles.", "If you didn't plan the entry before the candle "
-     "formed, you're reacting, not trading — go back to Module 10's checklist instead."),
+     "formed, you're reacting, not trading — go back to Chapter 10's checklist instead."),
     ("Wait for candle close.", "A candle can look like anything mid-formation. "
      "Only a closed candle has actually told you who won."),
     ("Never buy into resistance.", "Even a perfect bullish pattern is fighting "
      "the level, not just the trend, if it forms right under resistance."),
     ("Never sell into support.", "The mirror rule — a bearish pattern at "
      "support is fighting a level that has already proven it can hold."),
-    ("Always know the trend.", "Module 1 comes before every other module for a "
+    ("Always know the trend.", "Chapter 1 comes before every other chapter for a "
      "reason: direction changes what every pattern means."),
     ("Risk only 1–2% per trade.", "Position size is the one variable you fully "
      "control — keep it small enough that a losing streak can't end your account."),
     ("Don't trade emotionally.", "Revenge trades, FOMO entries, and moved stop "
-     "losses are all the same mistake wearing a different outfit — see Module 11."),
+     "losses are all the same mistake wearing a different outfit — see Chapter 11."),
     ("Follow your trading plan.", "A plan you abandon under pressure was never "
      "really a plan — it was a suggestion you agreed with in advance."),
 ]
@@ -2381,7 +2381,7 @@ def build():
         "HFX and binary options trading carries a very high level of risk and is "
         "not suitable for every investor — it is possible to lose some, or all, "
         "of your invested capital.",
-        "Every case study in Module 11 is an illustrative teaching example, not "
+        "Every case study in Chapter 11 is an illustrative teaching example, not "
         "a real historical chart or an actual trade. No pattern, framework, or "
         "checklist in this book works every time.",
         "Concepts like liquidity, order blocks, and Fair Value Gaps are widely "
@@ -2401,24 +2401,24 @@ def build():
     toc_parts = [
         ('Introduction', ['How This Volume Builds on Volume I']),
         ('Part I — Structure & Levels', [
-            'Module 1 — Understanding Market Structure (12 lessons)',
-            'Module 2 — Support & Resistance (8 lessons)',
+            'Chapter 1 — Understanding Market Structure (12 lessons)',
+            'Chapter 2 — Support & Resistance (8 lessons)',
         ]),
         ('Part II — Psychology & Confirmation', [
-            'Module 3 — Candlestick Psychology (14 patterns revisited)',
-            'Module 4 — Candlestick Confirmation (6 lessons)',
+            'Chapter 3 — Candlestick Psychology (14 patterns revisited)',
+            'Chapter 4 — Candlestick Confirmation (6 lessons)',
         ]),
         ('Part III — Advanced Patterns & Reliability', [
-            'Module 5 — 12 Advanced Candlestick Patterns',
-            'Module 6 — Candlestick Pattern Reliability',
-            'Module 7 — Candlestick Pattern Combinations',
-            'Module 8 — Fake Candlestick Signals (8 lessons)',
+            'Chapter 5 — 12 Advanced Candlestick Patterns',
+            'Chapter 6 — Candlestick Pattern Reliability',
+            'Chapter 7 — Candlestick Pattern Combinations',
+            'Chapter 8 — Fake Candlestick Signals (8 lessons)',
         ]),
         ('Part IV — Execution & Mastery', [
-            'Module 9 — Candlesticks on Different Timeframes',
-            'Module 10 — The OneWay FX Candlestick Strategy',
-            'Module 11 — Trade Case Studies (12 illustrative examples)',
-            'Module 12 — Candlestick Trading Rules',
+            'Chapter 9 — Candlesticks on Different Timeframes',
+            'Chapter 10 — The OneWay FX Candlestick Strategy',
+            'Chapter 11 — Trade Case Studies (12 illustrative examples)',
+            'Chapter 12 — Candlestick Trading Rules',
         ]),
         ('Reference', [
             'Glossary of Terms (75 intermediate concepts)',
@@ -2446,43 +2446,43 @@ def build():
         "probability so it actually says something useful about what to do next.",
         styles['Body']))
     story.append(Paragraph(
-        "Twelve modules make up this book. The first two give you the map — "
+        "Twelve chapters make up this book. The first two give you the map — "
         "market structure and support/resistance — that every pattern needs in "
-        "order to mean anything. The middle modules deepen your understanding of "
+        "order to mean anything. The middle chapters deepen your understanding of "
         "candlesticks themselves: the psychology behind them, how to confirm "
         "them, twelve advanced patterns beyond Volume I's fourteen, and an "
         "honest look at which patterns actually deserve your trust. The final "
-        "modules turn all of it into something usable — a strategy checklist, "
+        "chapters turn all of it into something usable — a strategy checklist, "
         "illustrative case studies, and a short list of rules you can actually "
         "remember under pressure.", styles['Body']))
     story.append(Paragraph(
-        "Read this volume in order. Each module assumes you've absorbed the "
-        "ones before it, and the later modules reference earlier ones by name.",
+        "Read this volume in order. Each chapter assumes you've absorbed the "
+        "ones before it, and the later chapters reference earlier ones by name.",
         styles['Body']))
     story.append(PageBreak())
 
-    # ================= MODULE 1 =================
+    # ================= CHAPTER 1 =================
     story.extend(module_opener(1, 'Understanding Market Structure', MODULE1_INTRO))
     for t in MODULE1_TOPICS:
         story.append(render_topic(**t))
         story.append(Spacer(1, 8))
     story.append(PageBreak())
 
-    # ================= MODULE 2 =================
+    # ================= CHAPTER 2 =================
     story.extend(module_opener(2, 'Support & Resistance', MODULE2_INTRO))
     for t in MODULE2_TOPICS:
         story.append(render_topic(**t))
         story.append(Spacer(1, 8))
     story.append(PageBreak())
 
-    # ================= MODULE 3 =================
+    # ================= CHAPTER 3 =================
     story.extend(module_opener(3, 'Candlestick Psychology', MODULE3_INTRO))
     for p in MODULE3_PATTERNS:
         story.append(psychology_card(**p))
         story.append(Spacer(1, 8))
     story.append(PageBreak())
 
-    # ================= MODULE 4 =================
+    # ================= CHAPTER 4 =================
     story.extend(module_opener(4, 'Candlestick Confirmation', MODULE4_INTRO))
     story.append(render_topic(**MODULE4_TOPICS[0]))
     story.append(Spacer(1, 6))
@@ -2493,7 +2493,7 @@ def build():
         story.append(Spacer(1, 8))
     story.append(PageBreak())
 
-    # ================= MODULE 5 =================
+    # ================= CHAPTER 5 =================
     story.extend(module_opener(5, '12 Advanced Candlestick Patterns', MODULE5_INTRO))
     story.append(PageBreak())
     for idx, p in enumerate(MODULE5_PATTERNS):
@@ -2501,35 +2501,35 @@ def build():
             story.append(flow)
         story.append(PageBreak())
 
-    # ================= MODULE 6 =================
+    # ================= CHAPTER 6 =================
     story.extend(module_opener(6, 'Candlestick Pattern Reliability', MODULE6_INTRO))
     for tier in MODULE6_TIERS:
         story.append(reliability_tier(tier['stars'], tier['title'], tier['why'], tier['names']))
         story.append(Spacer(1, 10))
     story.append(PageBreak())
 
-    # ================= MODULE 7 =================
+    # ================= CHAPTER 7 =================
     story.extend(module_opener(7, 'Candlestick Pattern Combinations', MODULE7_INTRO))
     for combo in MODULE7_COMBOS:
         story.append(combo_card(combo['parts'], combo['result'], combo['result_color'], combo['explanation']))
         story.append(Spacer(1, 10))
     story.append(PageBreak())
 
-    # ================= MODULE 8 =================
+    # ================= CHAPTER 8 =================
     story.extend(module_opener(8, 'Fake Candlestick Signals', MODULE8_INTRO))
     for t in MODULE8_TOPICS:
         story.append(render_topic(**t))
         story.append(Spacer(1, 8))
     story.append(PageBreak())
 
-    # ================= MODULE 9 =================
+    # ================= CHAPTER 9 =================
     story.extend(module_opener(9, 'Candlesticks on Different Timeframes', MODULE9_INTRO))
     story.append(timeframe_table(MODULE9_TIMEFRAMES))
     story.append(Spacer(1, 14))
     story.append(KeepTogether(MODULE9_HTF_DRAWING))
     story.append(PageBreak())
 
-    # ================= MODULE 10 =================
+    # ================= CHAPTER 10 =================
     story.extend(module_opener(10, 'The OneWay FX Candlestick Strategy', MODULE10_INTRO))
     for head, body in MODULE10_CHECKLIST:
         story.append(KeepTogether([Paragraph(head, styles['SubHeading']),
@@ -2549,14 +2549,14 @@ def build():
     ]))
     story.append(PageBreak())
 
-    # ================= MODULE 11 =================
+    # ================= CHAPTER 11 =================
     story.extend(module_opener(11, 'Trade Case Studies', MODULE11_INTRO))
     for case in MODULE11_CASES:
         story.append(case_study(**case))
         story.append(Spacer(1, 12))
     story.append(PageBreak())
 
-    # ================= MODULE 12 =================
+    # ================= CHAPTER 12 =================
     story.extend(module_opener(12, 'Candlestick Trading Rules', MODULE12_INTRO))
     for i, (rule, why) in enumerate(MODULE12_RULES):
         story.append(rule_item(i + 1, rule, why))
@@ -2569,7 +2569,7 @@ def build():
     story.append(Paragraph(
         "Seventy-five intermediate and advanced terms used across this volume, "
         "many drawn from modern market-structure and smart-money-concept "
-        "vocabulary. If a term from Modules 1, 2, or 9 sent you looking for a "
+        "vocabulary. If a term from Chapters 1, 2, or 9 sent you looking for a "
         "definition, it's here.", styles['Body']))
     story.append(Spacer(1, 4))
     navy_hex = _hex(NAVY)
