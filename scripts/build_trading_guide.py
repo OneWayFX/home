@@ -124,6 +124,10 @@ styles.add(ParagraphStyle(
     name='GlanceValue', fontName='Helvetica-Bold', fontSize=10.3, leading=13,
     textColor=NAVY,
 ))
+styles.add(ParagraphStyle(
+    name='GlossaryEntry', fontName='Helvetica', fontSize=9.8, leading=14,
+    textColor=INK, alignment=TA_JUSTIFY, spaceAfter=8,
+))
 
 # ---------------------------------------------------------------------------
 # Candlestick drawing engine
@@ -928,6 +932,93 @@ def onLaterPages(c, doc):
     header_footer(c, doc, 'onewayfx.com')
 
 
+# ---------------------------------------------------------------------------
+# Glossary
+# ---------------------------------------------------------------------------
+
+GLOSSARY = [
+    ('HFX', "High-frequency, short-expiry FX (foreign exchange) trading — taking "
+            "short-term directional positions on currency pairs over compressed "
+            "timeframes."),
+    ('Binary Options', "A financial contract that pays a fixed amount if price is "
+                        "above or below a set strike level at expiry, and nothing if "
+                        "it isn't — profit doesn't scale with how far price moves."),
+    ('Call Option', "A binary options position that profits if the price finishes "
+                     "above the strike price at expiration."),
+    ('Put Option', "A binary options position that profits if the price finishes "
+                    "below the strike price at expiration."),
+    ('Candlestick', "A chart element that shows a period's open, high, low, and "
+                     "close prices in a single visual bar."),
+    ('Open', "The first traded price of a candle's time period."),
+    ('High', "The highest traded price reached during a candle's time period."),
+    ('Low', "The lowest traded price reached during a candle's time period."),
+    ('Close', "The last traded price of a candle's time period."),
+    ('Wick', "The thin line above or below a candle's body, marking a high or low "
+              "the close didn't hold. Also called a shadow."),
+    ('Candle Body', "The thick rectangle of a candle, marking the range between its "
+                     "open and close."),
+    ('Bullish', "Describing a candle, pattern, or move that signals rising prices or "
+                "buyer control."),
+    ('Bearish', "Describing a candle, pattern, or move that signals falling prices "
+                "or seller control."),
+    ('Support', "A price level where demand has repeatedly stopped a decline, "
+                 "tending to hold price up."),
+    ('Resistance', "A price level where selling has repeatedly stopped an advance, "
+                    "tending to hold price down."),
+    ('Trend', "The general direction price is moving over a period of time."),
+    ('Uptrend', "A sustained series of higher highs and higher lows."),
+    ('Downtrend', "A sustained series of lower highs and lower lows."),
+    ('Consolidation', "A period where price moves sideways within a range instead "
+                       "of trending."),
+    ('Breakout', "A move where price pushes decisively through a support or "
+                  "resistance level."),
+    ('Fakeout', "A breakout that fails and reverses back inside the prior range, "
+                 "trapping traders who entered on the break."),
+    ('Pullback', "A short, temporary move against the prevailing trend before the "
+                  "trend resumes."),
+    ('Retracement', "A partial reversal within a larger trend, typically measured as "
+                     "a percentage of the prior move."),
+    ('Reversal', "A change in the overall direction of a trend."),
+    ('Momentum', "The speed and strength of a price move in one direction."),
+    ('Price Action', "The study of raw price movement on a chart — without relying "
+                      "on indicators — to make trading decisions."),
+    ('Bullish Engulfing', "A two-candle reversal pattern where a bullish candle's "
+                           "body fully covers the prior bearish candle's body."),
+    ('Bearish Engulfing', "A two-candle reversal pattern where a bearish candle's "
+                           "body fully covers the prior bullish candle's body."),
+    ('Doji', "A candle with a virtually equal open and close, showing indecision "
+              "between buyers and sellers."),
+    ('Hammer', "A bullish reversal candle with a small body near the top of its "
+                "range and a long lower wick, found at the bottom of a downtrend."),
+    ('Shooting Star', "A bearish reversal candle with a small body near the bottom "
+                       "of its range and a long upper wick, found at the top of a "
+                       "bullish rally."),
+    ('Morning Star', "A three-candle bullish reversal pattern: a large bearish "
+                      "candle, a small indecisive candle, then a large bullish "
+                      "candle."),
+    ('Evening Star', "A three-candle bearish reversal pattern: a large bullish "
+                      "candle, a small indecisive candle, then a large bearish "
+                      "candle."),
+    ('Tweezer Top', "Two or more candles with matching highs, signaling resistance "
+                     "and a possible bearish reversal."),
+    ('Tweezer Bottom', "Two or more candles with matching lows, signaling support "
+                        "and a possible bullish reversal."),
+    ('RSI', "Relative Strength Index — a momentum indicator that measures the speed "
+             "and size of recent price changes to flag overbought or oversold "
+             "conditions."),
+    ('EMA', "Exponential Moving Average — a moving average that weights recent "
+             "prices more heavily, reacting faster to new price action than a "
+             "simple average."),
+    ('Stochastic', "A momentum indicator that compares a closing price to its price "
+                    "range over a set period to flag overbought or oversold "
+                    "conditions."),
+    ('Risk Management', "The practice of controlling position size, exposure, and "
+                         "losses in order to protect trading capital."),
+    ('Expiration Time', "The set moment at which a binary options position settles, "
+                         "based on where price is relative to the strike."),
+]
+
+
 def build():
     doc = BookDocTemplate(OUT_PATH, pagesize=letter,
                            leftMargin=MARGIN, rightMargin=MARGIN,
@@ -1017,6 +1108,7 @@ def build():
             'Chapter 5.  Putting Patterns to Work in HFX / Binary Options',
             'Chapter 6.  Risk & Money Management',
             'Closing Note from OneWay FX',
+            'Glossary of Terms',
         ]),
     ]
     for part_title, entries in toc_parts:
@@ -1301,6 +1393,20 @@ def build():
     story.append(Spacer(1, 16))
     story.append(Paragraph('OneWay FX', ParagraphStyle('sig', fontName='Helvetica-Bold', fontSize=13, textColor=NAVY)))
     story.append(Paragraph('onewayfxsupport@gmail.com', styles['Caption']))
+    story.append(PageBreak())
+
+    # ---------------- Glossary ----------------
+    story.append(Paragraph('REFERENCE', styles['ChapterKicker']))
+    story.append(Paragraph('Glossary of Terms', styles['ChapterTitle']))
+    story.append(HR(468, color=GOLD, thickness=2, space_after=14))
+    story.append(Paragraph(
+        "Quick definitions for the terms used throughout this guide.", styles['Body']))
+    story.append(Spacer(1, 4))
+    navy_hex = _hex(NAVY)
+    for term, definition in GLOSSARY:
+        story.append(Paragraph(
+            f'<b><font color="{navy_hex}">{term}</font></b> — {definition}',
+            styles['GlossaryEntry']))
 
     doc.build(story)
 
