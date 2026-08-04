@@ -22,15 +22,21 @@ NAVY = HexColor('#0B2545')
 NAVY_DARK = HexColor('#071A33')
 GOLD = HexColor('#C9962B')
 GOLD_LIGHT = HexColor('#E7C878')
-BULL_GREEN = HexColor('#178A5B')
-BEAR_RED = HexColor('#C0392B')
-CONTEXT_GRAY = HexColor('#AEB9C7')
+BULL_GREEN = HexColor('#26A69A')
+BEAR_RED = HexColor('#EF5350')
+BULL_STROKE = HexColor('#0F7A6B')
+BEAR_STROKE = HexColor('#B33330')
+CONTEXT_GRAY = HexColor('#BAC4D0')
+CONTEXT_STROKE = HexColor('#96A2B2')
 INK = HexColor('#1B2430')
 SUBTLE = HexColor('#5B6B7C')
 PANEL_BG = HexColor('#F3F6FA')
 PANEL_LINE = HexColor('#D8E0EA')
 WARN_BG = HexColor('#FDF1E8')
 WARN_LINE = HexColor('#E6A15C')
+CHART_BG = HexColor('#FCFDFE')
+CHART_BORDER = HexColor('#E1E7EF')
+CHART_GRID = HexColor('#EBEFF4')
 
 PAGE_W, PAGE_H = letter
 MARGIN = 0.85 * inch
@@ -129,16 +135,25 @@ def _candle(d, cx, o, c, hi, lo, w, y0, yscale, fill=None, muted=False):
     bull = c >= o
     if muted:
         fill_color = CONTEXT_GRAY
-        stroke = HexColor('#8C97A6')
+        stroke = CONTEXT_STROKE
         sw = 0.6
+        wick_w = 0.9
     else:
-        fill_color = fill if fill else (BULL_GREEN if bull else BEAR_RED)
-        stroke = HexColor('#1B2430')
-        sw = 0.9
+        if fill:
+            fill_color, stroke = fill, HexColor('#1B2430')
+        elif bull:
+            fill_color, stroke = BULL_GREEN, BULL_STROKE
+        else:
+            fill_color, stroke = BEAR_RED, BEAR_STROKE
+        sw = 0.7
+        wick_w = 1.15
     top, bottom = max(o, c), min(o, c)
-    d.add(Line(cx, Y(lo), cx, Y(hi), strokeColor=stroke, strokeWidth=sw))
-    body_h = max(Y(top) - Y(bottom), 1.6)
-    d.add(Rect(cx - w / 2.0, Y(bottom), w, body_h, fillColor=fill_color,
+    # wick as a hairline through the full body width so it reads as one
+    # continuous shadow behind the body, the way real candles render
+    d.add(Line(cx, Y(lo), cx, Y(hi), strokeColor=stroke, strokeWidth=wick_w))
+    body_h = max(Y(top) - Y(bottom), 1.4)
+    body_w = w * 0.62 if not muted else w
+    d.add(Rect(cx - body_w / 2.0, Y(bottom), body_w, body_h, fillColor=fill_color,
                 strokeColor=stroke, strokeWidth=sw))
 
 
@@ -167,58 +182,124 @@ BIAS_STYLE = {
 }
 
 
+def _ghost_candle(d, cx, o, c, hi, lo, w, y0, yscale, color):
+    """A dashed, unfilled 'projected' candle representing an expected future bar."""
+    def Y(v):
+        return y0 + v * yscale
+    top, bottom = max(o, c), min(o, c)
+    d.add(Line(cx, Y(lo), cx, Y(hi), strokeColor=color, strokeWidth=1.0,
+               strokeDashArray=[2, 2]))
+    body_h = max(Y(top) - Y(bottom), 1.4)
+    body_w = w * 0.62
+    d.add(Rect(cx - body_w / 2.0, Y(bottom), body_w, body_h, fillColor=color,
+               fillOpacity=0.10, strokeColor=color, strokeWidth=1.0,
+               strokeDashArray=[2, 2]))
+
+
 def pattern_drawing(context, pattern, bias, trend_label, bias_label=None,
-                     width=468, height=178):
-    """Build a Drawing showing prior-trend context candles + the highlighted
-    pattern candles + a dashed arrow projecting the implied bias."""
+                     width=468, height=192):
+    """Build a Drawing showing: a multi-candle prior-trend, the pattern boxed
+    in a highlight frame, and dashed 'projected' candles + an arrow showing
+    the expected trend once the pattern is identified."""
     d = Drawing(width, height)
     y0 = 34
-    yscale = 1.15
-    baseline_y = y0 + 0 * yscale
+    yscale = 1.1
 
+    def Y(v):
+        return y0 + v * yscale
+
+    # bordered figure panel, like a boxed diagram in a printed textbook
+    d.add(Rect(1, 4, width - 2, height - 8, fillColor=CHART_BG,
+               strokeColor=CHART_BORDER, strokeWidth=0.9))
+    # faint price gridlines behind the candles
+    for lvl in (20, 40, 60, 80):
+        gy = Y(lvl)
+        d.add(Line(9, gy, width - 9, gy, strokeColor=CHART_GRID, strokeWidth=0.6,
+                   strokeDashArray=[2, 2.5]))
     # baseline
     d.add(Line(8, 22, width - 8, 22, strokeColor=PANEL_LINE, strokeWidth=0.75))
 
-    x = 26
-    step = 20
-    for (o, c, hi, lo) in context:
-        _candle(d, x, o, c, hi, lo, 11, y0, yscale, muted=True)
-        x += step
-    ctx_end_x = x - step / 2.0
-    _label(d, ctx_end_x - (len(context) * step) / 2.0 + 6, height - 12,
-           trend_label, size=8, color=SUBTLE, bold=True)
+    label_row = height - 12
 
-    x += 26
-    cw = 32 if len(pattern) <= 2 else 26
-    gap = 30 if len(pattern) <= 2 else 22
+    # --- prior trend: a longer run of context candles ---
+    cctx_w = 7
+    step = 13.5
+    x = 20
+    for (o, c, hi, lo) in context:
+        _candle(d, x, o, c, hi, lo, cctx_w, y0, yscale, muted=True)
+        x += step
+    ctx_last_x = x - step
+    ctx_first_x = 20
+    _label(d, (ctx_first_x + ctx_last_x) / 2.0, label_row, trend_label,
+           size=8, color=SUBTLE, bold=True)
+
+    # dashed divider between the trend context and the highlighted pattern
+    divider_x = ctx_last_x + cctx_w / 2.0 + 9
+    d.add(Line(divider_x, 12, divider_x, height - 18, strokeColor=GOLD_LIGHT,
+               strokeWidth=0.8, strokeDashArray=[2, 2.5]))
+
+    # --- the pattern itself, boxed to call it out clearly ---
+    x = divider_x + 17
+    cw = 28 if len(pattern) == 1 else (22 if len(pattern) == 2 else 18)
+    gap = 28 if len(pattern) == 2 else 22
     positions = []
     for (o, c, hi, lo) in pattern:
         _candle(d, x, o, c, hi, lo, cw, y0, yscale)
-        positions.append(x)
+        positions.append((x, o, c, hi, lo))
         x += cw + gap
-    pat_center = sum(positions) / len(positions)
-    _label(d, pat_center, height - 12, "PATTERN", size=8, color=GOLD, bold=True)
+    xs = [p[0] for p in positions]
+    his = [p[3] for p in positions]
+    los = [p[4] for p in positions]
+    box_x0 = xs[0] - cw / 2.0 - 8
+    box_x1 = xs[-1] + cw / 2.0 + 8
+    box_y0 = Y(min(los)) - 8
+    box_y1 = Y(max(his)) + 9
+    d.add(Rect(box_x0, box_y0, box_x1 - box_x0, box_y1 - box_y0, rx=6, ry=6,
+               fillColor=None, strokeColor=GOLD, strokeWidth=1.4))
+    _label(d, (box_x0 + box_x1) / 2.0, label_row, 'PATTERN', size=8, color=GOLD, bold=True)
 
+    # --- projected candles: what price is expected to do next ---
     color, default_bias_label = BIAS_STYLE[bias]
-    last_x = positions[-1]
-    ax0 = last_x + cw / 2.0 + 10
+    last_close = positions[-1][2]
+    gw = 13
+    ggap = 17
     if bias == 'bullish':
-        ay0 = y0 + 55 * yscale
-        ax1, ay1 = ax0 + 46, ay0 + 34
+        c1 = min(94, last_close + 12)
+        c2 = min(97, c1 + 12)
+        g1 = (last_close, c1, c1 + 4, last_close - 3)
+        g2 = (c1, c2, c2 + 4, c1 - 3)
     elif bias == 'bearish':
-        ay0 = y0 + 45 * yscale
-        ax1, ay1 = ax0 + 46, ay0 - 34
+        c1 = max(6, last_close - 12)
+        c2 = max(3, c1 - 12)
+        g1 = (last_close, c1, last_close + 3, c1 - 4)
+        g2 = (c1, c2, c1 + 3, c2 - 4)
     else:
-        ay0 = y0 + 50 * yscale
-        ax1, ay1 = ax0 + 50, ay0 + 4
-    if ax1 > width - 14:
-        shift = ax1 - (width - 14)
+        c1 = last_close + 5
+        c2 = last_close - 3
+        g1 = (last_close, c1, c1 + 4, last_close - 4)
+        g2 = (c1, c2, c1 + 4, c2 - 4)
+
+    gx1 = box_x1 + 16 + gw / 2.0
+    gx2 = gx1 + gw + ggap
+    _ghost_candle(d, gx1, *g1, gw, y0, yscale, color)
+    _ghost_candle(d, gx2, *g2, gw, y0, yscale, color)
+
+    ax0 = box_x1 + 6
+    ay0 = Y(last_close)
+    ax1 = gx2 + gw / 2.0 + 30
+    ay1 = Y(g2[1]) + (8 if bias == 'bullish' else (-8 if bias == 'bearish' else 0))
+    if ax1 > width - 12:
+        shift = ax1 - (width - 12)
         ax0 -= shift
         ax1 -= shift
+        gx1 -= shift
+        gx2 -= shift
     _arrow(d, ax0, ay0, ax1, ay1, color)
     label = bias_label or default_bias_label
-    ly = ay1 + (10 if bias != 'bearish' else -14)
-    _label(d, ax1, ly, label, size=8.4, color=color, bold=True, anchor='end' if ax1>width-70 else 'start')
+    ly = ay1 + (11 if bias != 'bearish' else -15)
+    _label(d, ax1, ly, label, size=8.4, color=color, bold=True,
+           anchor='end' if ax1 > width - 78 else 'start')
+    _label(d, (gx1 + gx2) / 2.0, label_row, 'EXPECTED', size=7.4, color=color, bold=True)
 
     return d
 
@@ -227,32 +308,52 @@ def pattern_drawing(context, pattern, bias, trend_label, bias_label=None,
 # Trend context generators
 # ---------------------------------------------------------------------------
 
-def downtrend_context(end_level=68):
-    levels = [92, 84, 77, end_level + 3]
+def downtrend_context(end_level=68, n=7):
+    top = min(97, end_level + 3 + (n - 1) * 6)
+    bottom = end_level + 3
+    step = (top - bottom) / (n - 1) if n > 1 else 6
     out = []
-    for i, lvl in enumerate(levels):
+    lvl = top
+    for i in range(n):
         o = lvl
-        c = lvl - 6
-        hi = o + 3
-        lo = c - 3
+        c = lvl - step * 0.72
+        hi = o + step * 0.22
+        lo = c - step * 0.28
         out.append((o, c, hi, lo))
+        lvl = c - step * 0.1
     return out
 
 
-def uptrend_context(end_level=32):
-    levels = [8, 16, 23, end_level - 3]
+def uptrend_context(end_level=32, n=7):
+    bottom = max(3, end_level - 3 - (n - 1) * 6)
+    top = end_level - 3
+    step = (top - bottom) / (n - 1) if n > 1 else 6
     out = []
-    for i, lvl in enumerate(levels):
+    lvl = bottom
+    for i in range(n):
         o = lvl
-        c = lvl + 6
-        hi = c + 3
-        lo = o - 3
+        c = lvl + step * 0.72
+        hi = c + step * 0.22
+        lo = o - step * 0.28
         out.append((o, c, hi, lo))
+        lvl = c + step * 0.1
     return out
 
 
-def choppy_context():
-    return [(40, 46, 49, 37), (46, 41, 50, 38), (41, 47, 51, 39), (47, 43, 52, 40)]
+def choppy_context(n=7):
+    out = []
+    lvl = 40
+    up = True
+    for i in range(n):
+        delta = 6 if up else -5
+        o = lvl
+        c = lvl + delta
+        hi = max(o, c) + 3
+        lo = min(o, c) - 3
+        out.append((o, c, hi, lo))
+        lvl = c
+        up = not up
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -601,14 +702,21 @@ def anatomy_drawing(width=468, height=230):
     def Y(v):
         return y0 + v * yscale
 
+    d.add(Rect(1, 4, width - 2, height - 8, fillColor=CHART_BG,
+               strokeColor=CHART_BORDER, strokeWidth=0.9))
+    for lvl in (18, 38, 58, 78):
+        gy = Y(lvl)
+        d.add(Line(9, gy, width - 9, gy, strokeColor=CHART_GRID, strokeWidth=0.6,
+                   strokeDashArray=[2, 2.5]))
+
     # Bullish candle (left)
     bx = 140
     o, c, hi, lo = 28, 68, 78, 18
-    _candle(d, bx, o, c, hi, lo, 46, y0, yscale, fill=BULL_GREEN)
+    _candle(d, bx, o, c, hi, lo, 56, y0, yscale, fill=BULL_GREEN)
     # Bearish candle (right)
     rx = 330
     o2, c2, hi2, lo2 = 68, 28, 78, 18
-    _candle(d, rx, o2, c2, hi2, lo2, 46, y0, yscale, fill=BEAR_RED)
+    _candle(d, rx, o2, c2, hi2, lo2, 56, y0, yscale, fill=BEAR_RED)
 
     label_col = HexColor('#26364A')
     # Bullish labels
@@ -1034,8 +1142,10 @@ def build():
     checklist = [
         ("1. Who won?", "Is the body green (buyers closed higher than they opened) "
          "or red (sellers closed lower than they opened)?"),
-        ("2. How decisively?", "A large body relative to recent candles shows strong "
-         "conviction. A small body shows hesitation or balance."),
+        ("2. How strong was the move?", "Compare the size of the body to the candles "
+         "around it. A big body means one side pushed hard and won clearly. A small "
+         "body means buyers and sellers were evenly matched, and neither side gained "
+         "much ground."),
         ("3. Were there rejections?", "Long wicks show price was pushed to an "
          "extreme and then rejected — the longer the wick relative to the body, the "
          "stronger the rejection."),
