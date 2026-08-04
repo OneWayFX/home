@@ -175,9 +175,11 @@ def _label(d, x, y, text, size=7.6, color=SUBTLE, bold=False, anchor='middle'):
                  textAnchor=anchor))
 
 
+BEAR_DARK_RED = HexColor('#8B1E1E')
+
 BIAS_STYLE = {
     'bullish': (BULL_GREEN, 'Bullish Reversal'),
-    'bearish': (BEAR_RED, 'Bearish Reversal'),
+    'bearish': (BEAR_DARK_RED, 'Bearish Reversal'),
     'neutral': (HexColor('#8A93A3'), 'Indecision'),
 }
 
@@ -373,15 +375,16 @@ PATTERNS = [
                    "leaving little to no real body — just a thin horizontal line with "
                    "wicks extending above and/or below it. Visually it looks like a "
                    "plus sign or cross sitting on the price chart.",
-        psychology="Buyers and sellers pushed the price around during the period but "
-                   "ended up fighting to a draw. Neither side could hold control into "
-                   "the close, which signals hesitation and a possible shift in "
-                   "momentum, especially after a sustained run in one direction.",
+        psychology="A Doji means the market hasn't decided which direction it wants to "
+                   "go — buyers and sellers fought to a draw, with neither side holding "
+                   "control into the close. On its own that's just hesitation, but when "
+                   "a Doji appears within an established uptrend or downtrend, it's a "
+                   "strong signal that the trend is losing steam and the market is "
+                   "likely about to reverse.",
         usage="On its own, a Doji is not a trade signal — it's a warning light. "
-              "HFX / binary options traders treat it as a cue to watch the next 1-2 "
-              "candles closely: a strong candle breaking away from the Doji in either "
-              "direction often confirms which side won the tug-of-war and can be used "
-              "as an entry trigger for a short-expiry position in that direction.",
+              "HFX / binary options traders watch the next 1-2 candles closely: a "
+              "strong candle breaking away from the Doji confirms which side won and "
+              "can be used as an entry trigger for a short-expiry position.",
         caution="Doji candles are extremely common in choppy, low-volatility markets "
                 "and mean very little there. Only give weight to a Doji that appears "
                 "after a clear, extended trend or at an obvious support/resistance level.",
@@ -452,10 +455,13 @@ PATTERNS = [
                    "buyers absorbed that pressure and drove price back up near the "
                    "open (or higher) by the close. It shows a decisive intraday "
                    "rejection of lower prices after a decline.",
-        usage="Hammers are one of the most-watched reversal signals in short-term "
-              "trading. HFX / binary options traders typically wait for the next "
-              "candle to close above the hammer's body before entering a bullish "
-              "position, using the hammer's low as an invalidation reference point.",
+        usage="You'll typically spot a Hammer sitting at the bottom of a downtrend, "
+              "right where selling pressure is running out of steam — that location "
+              "is what gives the pattern its meaning. Hammers are one of the "
+              "most-watched reversal signals in short-term trading; HFX / binary "
+              "options traders typically wait for the next candle to close above "
+              "the hammer's body before entering a bullish position, using the "
+              "hammer's low as an invalidation reference point.",
         caution="A hammer with no prior downtrend is just a small candle with a long "
                 "wick — it has no reversal meaning. The body color (green or red) is "
                 "secondary to the shape and location.",
@@ -498,10 +504,12 @@ PATTERNS = [
         psychology="Buyers pushed price sharply higher intraday, but sellers took "
                    "control and drove it back down near the open by the close. It "
                    "signals that upward momentum was firmly rejected at the highs.",
-        usage="A Shooting Star after a clear uptrend is a classic short-term "
-              "exhaustion signal. Traders look for the next candle to close below "
-              "the star's body to confirm sellers are in control before positioning "
-              "for a move lower.",
+        usage="You'll typically spot a Shooting Star sitting at the top of a bullish "
+              "rally, right where buying pressure is running out of steam — that "
+              "location is what gives the pattern its meaning. It's a classic "
+              "short-term exhaustion signal; traders look for the next candle to "
+              "close below the star's body to confirm sellers are in control before "
+              "positioning for a move lower.",
         caution="A Shooting Star in a downtrend or sideways market carries little "
                 "significance — the pattern only earns its name after an advance.",
     ),
@@ -774,13 +782,17 @@ class HR(Flowable):
         self.canv.line(0, y, self.width, y)
 
 
+def _hex(c):
+    return '#%02X%02X%02X' % (round(c.red * 255), round(c.green * 255), round(c.blue * 255))
+
+
 def glance_table(bias, reliability, best_seen):
     color, bias_word = BIAS_STYLE[bias]
     data = [
         [Paragraph('BIAS', styles['GlanceLabel']),
          Paragraph('RELIABILITY', styles['GlanceLabel']),
          Paragraph('BEST SEEN', styles['GlanceLabel'])],
-        [Paragraph(f'<font color="{color.hexval()[:7] if hasattr(color, "hexval") else "#000000"}">{bias_word}</font>', styles['GlanceValue']),
+        [Paragraph(f'<font color="{_hex(color)}">{bias_word}</font>', styles['GlanceValue']),
          Paragraph(reliability, styles['GlanceValue']),
          Paragraph(best_seen, styles['GlanceValue'])],
     ]
@@ -1198,14 +1210,14 @@ def build():
         story.append(KeepTogether([drawing,
                      Paragraph(f'Figure — {p["name"]}: prior trend, the pattern, and its implied bias.', styles['Caption'])]))
 
-        story.append(Paragraph('What it looks like', styles['SubHeading']))
-        story.append(Paragraph(p['looks_like'], styles['Body']))
-        story.append(Paragraph('The psychology behind it', styles['SubHeading']))
-        story.append(Paragraph(p['psychology'], styles['Body']))
-        story.append(Paragraph('How OneWay FX traders use it', styles['SubHeading']))
-        story.append(Paragraph(p['usage'], styles['Body']))
-        story.append(Paragraph('Caution', styles['SubHeading']))
-        story.append(Paragraph(p['caution'], styles['Body']))
+        story.append(KeepTogether([Paragraph('What it looks like', styles['SubHeading']),
+                     Paragraph(p['looks_like'], styles['Body'])]))
+        story.append(KeepTogether([Paragraph('The psychology behind it', styles['SubHeading']),
+                     Paragraph(p['psychology'], styles['Body'])]))
+        story.append(KeepTogether([Paragraph('How OneWay FX traders use it', styles['SubHeading']),
+                     Paragraph(p['usage'], styles['Body'])]))
+        story.append(KeepTogether([Paragraph('Caution', styles['SubHeading']),
+                     Paragraph(p['caution'], styles['Body'])]))
         story.append(PageBreak())
 
     # ---------------- Chapter 5 ----------------
