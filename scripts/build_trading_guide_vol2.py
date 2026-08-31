@@ -2500,11 +2500,11 @@ def build():
 
     # ================= CHAPTER 5 =================
     story.extend(module_opener(5, '12 Advanced Candlestick Patterns', MODULE5_INTRO))
-    story.append(PageBreak())
     for idx, p in enumerate(MODULE5_PATTERNS):
         for flow in module5_pattern_block(idx, p):
             story.append(flow)
-        story.append(PageBreak())
+        story.append(Spacer(1, 14))
+    story.append(PageBreak())
 
     # ================= CHAPTER 6 =================
     story.extend(module_opener(6, 'Candlestick Pattern Reliability', MODULE6_INTRO))
