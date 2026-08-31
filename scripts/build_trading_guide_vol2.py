@@ -150,6 +150,14 @@ styles.add(ParagraphStyle(
     name='CaseTag', fontName='Helvetica-Bold', fontSize=11, leading=14,
     textColor=colors.white,
 ))
+styles.add(ParagraphStyle(
+    name='IntroBody', fontName='Helvetica', fontSize=13, leading=20,
+    textColor=INK, alignment=TA_JUSTIFY, spaceAfter=12,
+))
+styles.add(ParagraphStyle(
+    name='IntroBullet', fontName='Helvetica', fontSize=12.3, leading=18,
+    textColor=INK, alignment=TA_LEFT, spaceAfter=9, leftIndent=16,
+))
 
 # ---------------------------------------------------------------------------
 # Small helpers
@@ -1130,12 +1138,14 @@ MODULE4_INTRO = (
 _confirm_context = downtrend_context(end_level=55, n=6)
 _confirm_pattern = [(55, 45, 57, 43), (42, 62, 64, 40)]
 
-MODULE4_CONFIRM_DRAWING = [
+MODULE4_CONFIRM_DRAWING_1 = [
     pattern_drawing(_confirm_context, _confirm_pattern, bias='neutral',
                      trend_label='Downtrend', bias_label='Unclear — no confirmation yet'),
     Paragraph('Without confirmation: the pattern appeared, but nothing has proven it yet.',
               styles['Caption']),
-    Spacer(1, 8),
+]
+
+MODULE4_CONFIRM_DRAWING_2 = [
     pattern_drawing(_confirm_context, _confirm_pattern, bias='bullish',
                      trend_label='Downtrend'),
     Paragraph('With confirmation: the next candle closes higher, proving buyers are in control.',
@@ -2308,6 +2318,38 @@ def module5_pattern_block(idx, p):
     return story_block
 
 
+def pattern_index_table(patterns):
+    num_style = ParagraphStyle('idxnum', fontName='Helvetica-Bold', fontSize=11,
+                                textColor=GOLD, alignment=TA_CENTER)
+    name_style = ParagraphStyle('idxname', fontName='Helvetica-Bold', fontSize=10.6,
+                                 leading=13.5, textColor=NAVY)
+    tag_style = ParagraphStyle('idxtag', fontName='Helvetica-Oblique', fontSize=8.8,
+                                leading=11.5, textColor=SUBTLE)
+    bias_style = ParagraphStyle('idxbias', fontName='Helvetica-Bold', fontSize=9.4,
+                                 leading=12, alignment=TA_CENTER)
+    rows = [[Paragraph('#', styles['GlanceLabel']), Paragraph('PATTERN', styles['GlanceLabel']),
+             Paragraph('BIAS', styles['GlanceLabel'])]]
+    for i, p in enumerate(patterns):
+        color, default_word = BIAS_STYLE[p['bias']]
+        bias_word = p.get('bias_label') or default_word
+        rows.append([
+            Paragraph(str(i + 1), num_style),
+            [Paragraph(p['name'], name_style), Paragraph(p['tagline'], tag_style)],
+            Paragraph(f'<font color="{_hex(color)}">{bias_word}</font>', bias_style),
+        ])
+    t = Table(rows, colWidths=[32, 316, 120])
+    style = [
+        ('BACKGROUND', (0, 0), (-1, 0), PANEL_BG),
+        ('LINEBELOW', (0, 0), (-1, 0), 0.75, PANEL_LINE),
+        ('LINEBELOW', (0, 1), (-1, -2), 0.4, PANEL_LINE),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('TOPPADDING', (0, 0), (-1, -1), 4.5), ('BOTTOMPADDING', (0, 0), (-1, -1), 4.5),
+        ('LEFTPADDING', (0, 0), (-1, -1), 8), ('RIGHTPADDING', (0, 0), (-1, -1), 8),
+    ]
+    t.setStyle(TableStyle(style))
+    return t
+
+
 def build():
     doc = BaseDocTemplate(OUT_PATH, pagesize=letter,
                            leftMargin=MARGIN, rightMargin=MARGIN,
@@ -2412,7 +2454,7 @@ def build():
         "candles form. That's the vocabulary. This volume teaches the grammar — "
         "how to combine that vocabulary with market context, structure, and "
         "probability so it actually says something useful about what to do next.",
-        styles['Body']))
+        styles['IntroBody']))
     story.append(Paragraph(
         "Twelve chapters make up this book. The first two give you the map — "
         "market structure and support/resistance — that every pattern needs in "
@@ -2422,11 +2464,29 @@ def build():
         "honest look at which patterns actually deserve your trust. The final "
         "chapters turn all of it into something usable — a strategy checklist, "
         "illustrative case studies, and a short list of rules you can actually "
-        "remember under pressure.", styles['Body']))
+        "remember under pressure.", styles['IntroBody']))
     story.append(Paragraph(
         "Read this volume in order. Each chapter assumes you've absorbed the "
         "ones before it, and the later chapters reference earlier ones by name.",
-        styles['Body']))
+        styles['IntroBody']))
+    story.append(Spacer(1, 8))
+    story.append(Paragraph('What’s Inside', styles['SectionHeading']))
+    intro_parts = [
+        ("Part I — Structure &amp; Levels.", "How to read what the market is "
+         "already doing — trend, structure, and the support/resistance levels "
+         "that give a pattern somewhere meaningful to happen."),
+        ("Part II — Psychology &amp; Confirmation.", "Why each candlestick "
+         "pattern actually forms, and the discipline of never trading one in "
+         "isolation."),
+        ("Part III — Advanced Patterns &amp; Reliability.", "Twelve more "
+         "patterns beyond Volume I, ranked honestly by how much you should "
+         "trust each one, and how to combine them into higher-probability setups."),
+        ("Part IV — Execution &amp; Mastery.", "A repeatable strategy "
+         "checklist, illustrative case studies, and the trading rules to hold "
+         "yourself to on every single trade."),
+    ]
+    for head, body in intro_parts:
+        story.append(Paragraph(f'<b>{head}</b> {body}', styles['IntroBullet']))
     story.append(PageBreak())
 
     # ================= CHAPTER 1 =================
@@ -2452,22 +2512,31 @@ def build():
 
     # ================= CHAPTER 4 =================
     story.extend(module_opener(4, 'Candlestick Confirmation', MODULE4_INTRO))
-    story.append(render_topic(**MODULE4_TOPICS[0]))
-    story.append(Spacer(1, 6))
-    story.append(KeepTogether(MODULE4_CONFIRM_DRAWING))
-    story.append(Spacer(1, 8))
-    for t in MODULE4_TOPICS[1:]:
+    for t in MODULE4_TOPICS:
         story.append(render_topic(**t))
         story.append(Spacer(1, 8))
+    story.append(Paragraph('Putting It Together', styles['SectionHeading']))
+    story.append(Paragraph(
+        "Here is the single confirmation habit from this chapter, shown side by "
+        "side: the same pattern, once left to speak for itself, and once given "
+        "the one piece of proof that actually matters — the next candle's close.",
+        styles['Body']))
+    story.append(Spacer(1, 6))
+    story.append(KeepTogether(MODULE4_CONFIRM_DRAWING_1))
+    story.append(Spacer(1, 8))
+    story.append(KeepTogether(MODULE4_CONFIRM_DRAWING_2))
     story.append(PageBreak())
 
     # ================= CHAPTER 5 =================
     story.extend(module_opener(5, '12 Advanced Candlestick Patterns', MODULE5_INTRO))
+    story.append(Spacer(1, 6))
+    story.append(Paragraph('In This Chapter', styles['SectionHeading']))
+    story.append(KeepTogether(pattern_index_table(MODULE5_PATTERNS)))
+    story.append(PageBreak())
     for idx, p in enumerate(MODULE5_PATTERNS):
         for flow in module5_pattern_block(idx, p):
             story.append(flow)
-        story.append(Spacer(1, 14))
-    story.append(PageBreak())
+        story.append(PageBreak())
 
     # ================= CHAPTER 6 =================
     story.extend(module_opener(6, 'Candlestick Pattern Reliability', MODULE6_INTRO))
