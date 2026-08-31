@@ -2,6 +2,7 @@
 """Generate OneWay FX Volume II — Reading the Story Behind Price Action."""
 
 import math
+import os
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 from reportlab.lib import colors
@@ -46,6 +47,7 @@ PAGE_W, PAGE_H = letter
 MARGIN = 0.85 * inch
 
 OUT_PATH = "OneWayFX_Reading_the_Story_Behind_Price_Action_Vol2.pdf"
+COVER_IMAGE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'vol2_cover.png')
 
 # ---------------------------------------------------------------------------
 # Styles
@@ -2234,39 +2236,11 @@ GLOSSARY2 = [
 
 def cover_page_canvas(c, doc):
     c.saveState()
-    c.setFillColor(NAVY_DARK)
+    c.setFillColor(colors.black)
     c.rect(0, 0, PAGE_W, PAGE_H, fill=1, stroke=0)
-    c.setFillColor(NAVY)
-    c.rect(0, PAGE_H * 0.28, PAGE_W, PAGE_H * 0.72, fill=1, stroke=0)
-    c.setStrokeColor(GOLD)
-    c.setLineWidth(2)
-    c.line(MARGIN, PAGE_H * 0.28, PAGE_W - MARGIN, PAGE_H * 0.28)
-    import random
-    random.seed(19)
-    base_y = PAGE_H * 0.16
-    xs = list(range(int(MARGIN) + 10, int(PAGE_W - MARGIN) - 10, 26))
-    levels = []
-    lvl = 40
-    for i in range(len(xs)):
-        lvl += random.choice([-14, -6, 4, 12, 18, -10])
-        lvl = max(10, min(90, lvl))
-        levels.append(lvl)
-    for i, x in enumerate(xs):
-        o = levels[i]
-        c2 = levels[i] + random.choice([-16, -8, 6, 14, 20])
-        c2 = max(5, min(95, c2))
-        hi = max(o, c2) + random.randint(3, 10)
-        lo = min(o, c2) - random.randint(3, 10)
-        bull = c2 >= o
-        color = BULL_GREEN if bull else BEAR_RED
-        scale = 0.9
-        y0 = base_y
-        c.setStrokeColor(HexColor('#3A4E6E'))
-        c.setLineWidth(1)
-        c.line(x, y0 + lo * scale, x, y0 + hi * scale)
-        c.setFillColor(color)
-        top, bottom = max(o, c2), min(o, c2)
-        c.rect(x - 6, y0 + bottom * scale, 12, max((top - bottom) * scale, 2), fill=1, stroke=0)
+    if os.path.exists(COVER_IMAGE_PATH):
+        c.drawImage(COVER_IMAGE_PATH, 0, 0, width=PAGE_W, height=PAGE_H,
+                    preserveAspectRatio=True, anchor='c', mask='auto')
     c.restoreState()
 
 
@@ -2353,21 +2327,10 @@ def build():
     story = []
 
     # ---------------- Cover ----------------
-    cover_story = [
-        Spacer(1, PAGE_H * 0.28),
-        Paragraph('ONEWAY FX', ParagraphStyle('brand', fontName='Helvetica-Bold', fontSize=15,
-                   textColor=GOLD, alignment=TA_CENTER, tracking=3)),
-        Spacer(1, 14),
-        Paragraph('Reading the Story<br/>Behind Price Action', styles['CoverTitle']),
-        Spacer(1, 10),
-        Paragraph('Volume II — Combining Candlesticks with Market Structure,<br/>'
-                  'Confirmation, and Probability', styles['CoverSubtitle']),
-        Spacer(1, PAGE_H * 0.19),
-        Paragraph('Education Series &nbsp;•&nbsp; Volume II', styles['CoverFooter']),
-        Paragraph('onewayfxsupport@gmail.com', styles['CoverFooter']),
-    ]
+    # The cover art (title, tagline, and branding) is baked into the image
+    # drawn by cover_page_canvas; this placeholder just occupies the page.
     story.append(NextPageTemplate('Cover'))
-    story.extend(cover_story)
+    story.append(Spacer(1, PAGE_H - 1))
     story.append(NextPageTemplate('Content'))
     story.append(PageBreak())
 
