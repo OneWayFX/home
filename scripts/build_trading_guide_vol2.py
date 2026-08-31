@@ -339,7 +339,9 @@ def structure_drawing(points, width=468, height=188, ref_line=None, ref_label=No
     if arrows:
         for idx, direction, acolor in arrows:
             x, y = pts_xy[idx]
-            off = 11 if direction == 'up' else -11
+            has_label = bool(points[idx][2])
+            base_off = 22 if has_label else 11
+            off = base_off if direction == 'up' else -base_off
             _tri_arrow(d, x, y + off, direction, acolor)
 
     if annotation:
@@ -685,7 +687,7 @@ MODULE1_TOPICS = [
             [(0.08, 28, None, 'low'), (0.32, 74, 'Prior High', 'high'),
              (0.58, 44, None, 'low'), (0.85, 58, 'Lower High', 'high')],
         ),
-        caption='Figure — The second peak fails below the first: a Lower High.',
+        caption='Figure — The second peak falls below the first: a Lower High.',
     ),
     dict(
         title='Lower Lows (LL)',
@@ -922,11 +924,11 @@ MODULE2_TOPICS = [
     dict(
         title='Psychological Price Levels',
         paragraphs=[
-            "Round numbers act like magnets — a level like 1.2000 on EUR/USD or a "
-            "clean 100.00 on an index attracts orders simply because so many "
-            "traders and institutions use round numbers to place them. These "
-            "levels can act as support or resistance even with no prior chart "
-            "history at all, purely because of where the number sits.",
+            "Round numbers act like magnets — a level like 1.2000 on EUR/USD "
+            "attracts orders simply because so many traders and institutions use "
+            "round numbers to place them. These levels can act as support or "
+            "resistance even with no prior chart history at all, purely because "
+            "of where the number sits.",
         ],
         drawing=structure_drawing(
             [(0.05, 40, None, 'low'), (0.20, 60, None, 'high'), (0.35, 48, None, 'low'),
@@ -1620,7 +1622,7 @@ MODULE7_COMBOS = [
                      "level, and structure all pointing to the same reversal."),
     dict(parts=['Doji', 'Support', 'Confirmation Candle'], result='Cautious Long Entry',
          result_color=GOLD,
-         explanation="A Doji by itself is only a three-star signal (Chapter 6). But "
+         explanation="A Doji by itself is only a four-star signal (Chapter 6). But "
                      "a Doji at support, followed by a strong bullish confirmation "
                      "candle, has climbed the confidence ladder rung by rung — "
                      "this is how a weak pattern becomes a tradeable setup."),
@@ -1755,6 +1757,9 @@ MODULE9_TIMEFRAMES = [
     ('5 Minute', "One of the most common HFX / binary options execution "
                  "timeframes — enough candles to see short-term structure, still "
                  "fast enough for short-expiry trading."),
+    ('10 Minute', "A middle ground between the 5-Minute and 15-Minute — a little "
+                  "smoother and less noisy, while still fast enough for active "
+                  "short-expiry execution."),
     ('15 Minute', "A short-term momentum view. Enough data to see a real trend "
                   "and real support/resistance, while still updating quickly."),
     ('30 Minute', "A session-level view — useful for seeing how price has behaved "
@@ -2002,7 +2007,7 @@ MODULE11_CASES = [
              "with no trend context, no level, and no confirmation behind it.",
          good="A trader waits until that same Doji forms at a tested support "
               "level with a strong confirming candle behind it — turning a "
-              "three-star pattern into a genuinely tradeable setup (Chapter 7).",
+              "four-star pattern into a genuinely tradeable setup (Chapter 7).",
          lesson="The pattern is the least important ingredient in a good trade "
                 "— context is what does most of the work."),
     dict(number=12, title='Revenge Trading After a Loss',
